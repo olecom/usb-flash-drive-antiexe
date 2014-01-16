@@ -1,13 +1,17 @@
 <package><job id="anti-autorun"><script language="JScript">
-   WScript.Echo("Начинаем следить за autorun вирусами на флэшках. Рекомдации по пользованию флэшками: хранить программы и папки с большим количеством файлов по возможности в архивах (ZIP, RAR). Корневая директория должна содержать только поддиректории. Следить за спонтанно появляющимися файлами и немедленно их удалять в менеджере файлов (Total Commander, FAR)."+String.fromCharCode(10,13));
-    var fso = new ActiveXObject("Scripting.FileSystemObject"), c = 0;
+    WScript.Echo("Начинаем следить за autorun вирусами на флэшках. Рекомдации по\
+пользованию флэшками: хранить программы и папки с большим количеством файлов по\
+возможности в архивах (ZIP, RAR). Корневая директория должна содержать только\
+поддиректории. Следить за спонтанно появляющимися файлами и немедленно их удалять\
+в менеджере файлов (Total Commander, FAR)."+String.fromCharCode(10,13));
+    var fso = new ActiveXObject("Scripting.FileSystemObject"), c = 0, status;
     do {
         if (fso.Drives.Count == c) {
             WScript.Sleep(500);
             continue;
         }
         var e = new Enumerator(fso.Drives), s="", i, fo, fe;
-        c = fso.Drives.Count;
+        c = fso.Drives.Count, status = 0;
         WScript.Echo("Число дисков изменилось. Проверяем...");
         for (; !e.atEnd(); e.moveNext()) {
             if ("A" == e.item().DriveLetter) e.moveNext();
@@ -15,9 +19,16 @@
             s = i.DriveLetter;
             if (!(1 == i.DriveType && i.IsReady)) continue;
             if (fso.FileExists(s+":\\autorun.inf")) {
-                try { fso.DeleteFile(s+":\\autorun.inf"); } catch (j) {}
-                WScript.Echo("Обезврежен: "+s+":\\autorun.inf");
-                s="+";
+                try {
+                    fo=fso.GetFile(s+":\\autorun.inf");
+                    if (fo.Attributes & 1) fo.Attributes -= 1;
+                    delete(fo);
+                    fso.DeleteFile(s+":\\autorun.inf");
+                    WScript.Echo("Обезврежен: "+s+":\\autorun.inf");
+                } catch (j) {
+                    WScript.Echo("ВНИМАНИЕ! "+s+":\\autorun.inf НЕ ОБЕЗВРЕЖЕН!");
+                }
+                status = 1;
                 try {
                     fso.CreateFolder(s+":\\!!!_ВИРУСЫ-удалять\\")
                 } catch (j) {}
@@ -50,40 +61,50 @@
                 } catch (j) {}
                 fo = fso.GetFolder(s+":\\!!!_ВИРУСЫ-удалять\\");
                 fe = new Enumerator(fo.files);
-                for (; !fe.atEnd(); fe.moveNext()) {
-                    i = String(fe.item());
-                    if(!("!" == i.substring(i.length-1,i.length))) {
-                        try {
-                            WScript.Echo("Перемещаем "+fe.item().ShortName+" -> !!!_ВИРУСЫ-удалять\\"+fe.item().ShortName.substr(0,fe.item().ShortName.length - 1)+"!");
-                            fso.MoveFile(i, i.substr(0,i.length - 1)+"!");
-                        } catch (j) {
-                            fso.DeleteFile(i.substr(0,i.length - 1)+"!");
-                            fso.MoveFile(i, i.substr(0,i.length - 1)+"!");
+                if ( fo.files.Count > 0) {
+                    status++;
+                    for (; !fe.atEnd(); fe.moveNext()) {
+                        i = String(fe.item());
+                        if(!("!" == i.substring(i.length-1,i.length))) {
+                            try {
+                                if (fe.item().Attributes & 1) fe.item().Attributes -= 1;
+                                WScript.Echo("Перемещаем "+fe.item().ShortName+" -> !!!_ВИРУСЫ-удалять\\"+fe.item().ShortName.substr(0,fe.item().ShortName.length - 1)+"!");
+                                fso.MoveFile(i, i.substr(0,i.length - 1)+"!");
+                            } catch (j) {
+                                WScript.Echo("Не вышло, пробуем удалить...");
+                                try { fso.DeleteFile(i); } catch (j) {
+                                    WScript.Echo("Тоже косяк. Удалять Тоталом!");
+                                }
+                            }
                         }
                     }
-                }
+                } else fo.Delete();
                 } /* autorun */
                 fo = fso.GetFolder(s+":\\");
                 fe = new Enumerator(fo.SubFolders);
                 for (; !fe.atEnd(); fe.moveNext()) {
-                    var n = String.fromCharCode(10,13);
+                    var n = String.fromCharCode(10,13), d;
                     i = fe.item();
+                    d = String(i);
                     if (i.Attributes & 2) {
                         i.Attributes -= 2;
-                        s = "!";
-                        try { i.Move("!!!"+i.ShortName+"_Вирусы"); } catch (j) {}
+                        status |= 8;
                     }
                     if (i.Attributes & 4) {
                         i.Attributes -= 4;
-                        s = "!";
+                        status |= 16;
                     }
-                    if ("!" == s) {
-                        s = "+";
-                        WScript.Echo("!! Найдена невидимая (системная) директория: " + n + "=================================================" + n + i + " ! Если это KALBA, RECYCL*, SETUP -- удалять это вирусы!" + n + "=================================================");
-                        try { i.Move("!!!"+i.ShortName+"_Вирусы"); } catch (j) {}
+                    if (8 < status) {
+                        status &= 3;
+                        WScript.Echo("!! Найдена невидимая (системная) директория: " + n + "=================================================" + n + i + " ! Если это KALBA, RECYCL*, SETUP -- удалять, это вирусы!" + n + "=================================================");
+                        try {
+                            fso.MoveFile(i, i+"_возмжно_скрываются_ВИРУСЫ");
+                        } catch (j) {
+                            WScript.Echo("Переименовать не получилось.");
+                        }
                     }
                 } /* hidden + system attributes */
         } /* drives -> flash */
-        if ("+" != s) WScript.Echo("Проверка ничего не выявила, пока...");
+        if (!status) WScript.Echo("Проверка ничего не выявила, пока...");
     } while(1);
 </script></job></package>
