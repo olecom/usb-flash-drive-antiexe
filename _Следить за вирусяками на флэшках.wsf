@@ -1,0 +1,82 @@
+<package><job id="anti-autorun"><script language="JScript">
+   WScript.Echo("Начинаем следить за autorun вирусами на флэшках. Рекомдации по пользованию флэшками: хранить программы и папки с большим количеством файлов по возможности в архивах (ZIP, RAR). Корневая директория должна содержать только поддиректории. Следить за спонтанно появляющимися файлами и немедленно их удалять в менеджере файлов (Total Commander, FAR)."+String.fromCharCode(10,13));
+	do {
+		var fso = new ActiveXObject("Scripting.FileSystemObject"),
+			e = new Enumerator(fso.Drives), s, i, fo, fe;
+		for (; !e.atEnd(); e.moveNext()) {
+			if ("A" == e.item().DriveLetter) e.moveNext();
+			i = e.item();
+			s = i.DriveLetter;
+			if (!(1 == i.DriveType && i.IsReady)) continue;
+			if (fso.FileExists(s+":\\autorun.inf")) {
+				try { fso.DeleteFile(s+":\\autorun.inf"); } catch (j) {}
+				WScript.Echo("Обезврежен: "+s+":\\autorun.inf");
+				try {
+					fso.CreateFolder(s+":\\!!!_ВИРУСЫ-удалять\\")
+				} catch (j) {}
+				try {fso.MoveFile(s+":\\*.exe", s+":\\!!!_ВИРУСЫ-удалять\\");
+					WScript.Echo("подозрительные EXE файлы");
+				} catch (j) {}
+				try {fso.MoveFile(s+":\\*.pif", s+":\\!!!_ВИРУСЫ-удалять\\");
+					WScript.Echo("Подозрительные PIF файлы");
+				} catch (j) {}
+				try {fso.MoveFile(s+":\\*.inf", s+":\\!!!_ВИРУСЫ-удалять\\");
+					WScript.Echo("Подозрительные INf файлы");
+				} catch (j) {}
+				try {fso.MoveFile(s+":\\*.dll", s+":\\!!!_ВИРУСЫ-удалять\\");
+					WScript.Echo("Подозрительные DLL файлы");
+				} catch (j) {}
+				try {fso.MoveFile(s+":\\*.cmd", s+":\\!!!_ВИРУСЫ-удалять\\");
+					WScript.Echo("Подозрительные CMD файлы");
+				} catch (j) {}
+				try {fso.MoveFile(s+":\\*.bat", s+":\\!!!_ВИРУСЫ-удалять\\");
+					WScript.Echo("Подозрительные BAT файлы");
+				} catch (j) {}
+				try {fso.MoveFile(s+":\\*.ini", s+":\\!!!_ВИРУСЫ-удалять\\");
+					WScript.Echo("Подозрительные INI файлы");
+				} catch (j) {}
+				try {fso.MoveFile(s+":\\*.wsf", s+":\\!!!_ВИРУСЫ-удалять\\");
+					WScript.Echo("Подозрительные WSF файлы");
+				} catch (j) {}
+				try {fso.MoveFile(s+":\\*.vbs", s+":\\!!!_ВИРУСЫ-удалять\\");
+					WScript.Echo("Подозрительные VBS файлы");
+				} catch (j) {}
+				fo = fso.GetFolder(s+":\\!!!_ВИРУСЫ-удалять\\");
+				fe = new Enumerator(fo.files);
+				for (; !fe.atEnd(); fe.moveNext()) {
+					i = String(fe.item());
+					if(!("!" == i.substring(i.length-1,i.length))) {
+						try {
+							WScript.Echo("Перемещаем "+fe.item().ShortName+" -> !!!_ВИРУСЫ-удалять\\"+fe.item().ShortName.substr(0,fe.item().ShortName.length - 1)+"!");						
+							fso.MoveFile(i, i.substr(0,i.length - 1)+"!");
+						} catch (j) {
+							fso.DeleteFile(i.substr(0,i.length - 1)+"!");
+							fso.MoveFile(i, i.substr(0,i.length - 1)+"!");
+						}
+					}
+				}
+				} /* autorun */
+				fo = fso.GetFolder(s+":\\");
+				fe = new Enumerator(fo.SubFolders);
+				for (; !fe.atEnd(); fe.moveNext()) {
+					var n = String.fromCharCode(10,13);
+					i = fe.item();
+					if (i.Attributes & 2) {
+						i.Attributes -= 2;
+						s = "!";
+						try { i.Move("!!!"+i.ShortName+"_Вирусы"); } catch (j) {}
+					}
+					if (i.Attributes & 4) {
+						i.Attributes -= 4;
+						s = "!";
+					}
+					if ("!" == s) {
+						s = "";
+						WScript.Echo("!! Найдена невидимая (системная) директория: " + n + "=================================================" + n + i + " ! Если это KALBA, RECYCL*, SETUP -- удалять это вирусы!" + n + "=================================================");
+						try { i.Move("!!!"+i.ShortName+"_Вирусы"); } catch (j) {}
+					}
+				} /* hidden + system attributes */
+		} /* drives -> flash */
+		WScript.Sleep(500);
+	} while(1);
+</script></job></package>
