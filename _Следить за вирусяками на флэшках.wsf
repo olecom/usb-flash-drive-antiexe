@@ -1,82 +1,82 @@
 <package><job id="anti-autorun"><script language="JScript">
-   WScript.Echo("Íà÷èíàåì ñëåäèòü çà autorun âèðóñàìè íà ôëýøêàõ. Ðåêîìäàöèè ïî ïîëüçîâàíèþ ôëýøêàìè: õðàíèòü ïðîãðàììû è ïàïêè ñ áîëüøèì êîëè÷åñòâîì ôàéëîâ ïî âîçìîæíîñòè â àðõèâàõ (ZIP, RAR). Êîðíåâàÿ äèðåêòîðèÿ äîëæíà ñîäåðæàòü òîëüêî ïîääèðåêòîðèè. Ñëåäèòü çà ñïîíòàííî ïîÿâëÿþùèìèñÿ ôàéëàìè è íåìåäëåííî èõ óäàëÿòü â ìåíåäæåðå ôàéëîâ (Total Commander, FAR)."+String.fromCharCode(10,13));
-	do {
-		var fso = new ActiveXObject("Scripting.FileSystemObject"),
-			e = new Enumerator(fso.Drives), s, i, fo, fe;
-		for (; !e.atEnd(); e.moveNext()) {
-			if ("A" == e.item().DriveLetter) e.moveNext();
-			i = e.item();
-			s = i.DriveLetter;
-			if (!(1 == i.DriveType && i.IsReady)) continue;
-			if (fso.FileExists(s+":\\autorun.inf")) {
-				try { fso.DeleteFile(s+":\\autorun.inf"); } catch (j) {}
-				WScript.Echo("Îáåçâðåæåí: "+s+":\\autorun.inf");
-				try {
-					fso.CreateFolder(s+":\\!!!_ÂÈÐÓÑÛ-óäàëÿòü\\")
-				} catch (j) {}
-				try {fso.MoveFile(s+":\\*.exe", s+":\\!!!_ÂÈÐÓÑÛ-óäàëÿòü\\");
-					WScript.Echo("ïîäîçðèòåëüíûå EXE ôàéëû");
-				} catch (j) {}
-				try {fso.MoveFile(s+":\\*.pif", s+":\\!!!_ÂÈÐÓÑÛ-óäàëÿòü\\");
-					WScript.Echo("Ïîäîçðèòåëüíûå PIF ôàéëû");
-				} catch (j) {}
-				try {fso.MoveFile(s+":\\*.inf", s+":\\!!!_ÂÈÐÓÑÛ-óäàëÿòü\\");
-					WScript.Echo("Ïîäîçðèòåëüíûå INf ôàéëû");
-				} catch (j) {}
-				try {fso.MoveFile(s+":\\*.dll", s+":\\!!!_ÂÈÐÓÑÛ-óäàëÿòü\\");
-					WScript.Echo("Ïîäîçðèòåëüíûå DLL ôàéëû");
-				} catch (j) {}
-				try {fso.MoveFile(s+":\\*.cmd", s+":\\!!!_ÂÈÐÓÑÛ-óäàëÿòü\\");
-					WScript.Echo("Ïîäîçðèòåëüíûå CMD ôàéëû");
-				} catch (j) {}
-				try {fso.MoveFile(s+":\\*.bat", s+":\\!!!_ÂÈÐÓÑÛ-óäàëÿòü\\");
-					WScript.Echo("Ïîäîçðèòåëüíûå BAT ôàéëû");
-				} catch (j) {}
-				try {fso.MoveFile(s+":\\*.ini", s+":\\!!!_ÂÈÐÓÑÛ-óäàëÿòü\\");
-					WScript.Echo("Ïîäîçðèòåëüíûå INI ôàéëû");
-				} catch (j) {}
-				try {fso.MoveFile(s+":\\*.wsf", s+":\\!!!_ÂÈÐÓÑÛ-óäàëÿòü\\");
-					WScript.Echo("Ïîäîçðèòåëüíûå WSF ôàéëû");
-				} catch (j) {}
-				try {fso.MoveFile(s+":\\*.vbs", s+":\\!!!_ÂÈÐÓÑÛ-óäàëÿòü\\");
-					WScript.Echo("Ïîäîçðèòåëüíûå VBS ôàéëû");
-				} catch (j) {}
-				fo = fso.GetFolder(s+":\\!!!_ÂÈÐÓÑÛ-óäàëÿòü\\");
-				fe = new Enumerator(fo.files);
-				for (; !fe.atEnd(); fe.moveNext()) {
-					i = String(fe.item());
-					if(!("!" == i.substring(i.length-1,i.length))) {
-						try {
-							WScript.Echo("Ïåðåìåùàåì "+fe.item().ShortName+" -> !!!_ÂÈÐÓÑÛ-óäàëÿòü\\"+fe.item().ShortName.substr(0,fe.item().ShortName.length - 1)+"!");						
-							fso.MoveFile(i, i.substr(0,i.length - 1)+"!");
-						} catch (j) {
-							fso.DeleteFile(i.substr(0,i.length - 1)+"!");
-							fso.MoveFile(i, i.substr(0,i.length - 1)+"!");
-						}
-					}
-				}
-				} /* autorun */
-				fo = fso.GetFolder(s+":\\");
-				fe = new Enumerator(fo.SubFolders);
-				for (; !fe.atEnd(); fe.moveNext()) {
-					var n = String.fromCharCode(10,13);
-					i = fe.item();
-					if (i.Attributes & 2) {
-						i.Attributes -= 2;
-						s = "!";
-						try { i.Move("!!!"+i.ShortName+"_Âèðóñû"); } catch (j) {}
-					}
-					if (i.Attributes & 4) {
-						i.Attributes -= 4;
-						s = "!";
-					}
-					if ("!" == s) {
-						s = "";
-						WScript.Echo("!! Íàéäåíà íåâèäèìàÿ (ñèñòåìíàÿ) äèðåêòîðèÿ: " + n + "=================================================" + n + i + " ! Åñëè ýòî KALBA, RECYCL*, SETUP -- óäàëÿòü ýòî âèðóñû!" + n + "=================================================");
-						try { i.Move("!!!"+i.ShortName+"_Âèðóñû"); } catch (j) {}
-					}
-				} /* hidden + system attributes */
-		} /* drives -> flash */
-		WScript.Sleep(500);
-	} while(1);
+   WScript.Echo("ÐÐ°Ñ‡Ð¸Ð½Ð°ÐµÐ¼ ÑÐ»ÐµÐ´Ð¸Ñ‚ÑŒ Ð·Ð° autorun Ð²Ð¸Ñ€ÑƒÑÐ°Ð¼Ð¸ Ð½Ð° Ñ„Ð»ÑÑˆÐºÐ°Ñ…. Ð ÐµÐºÐ¾Ð¼Ð´Ð°Ñ†Ð¸Ð¸ Ð¿Ð¾ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ð½Ð¸ÑŽ Ñ„Ð»ÑÑˆÐºÐ°Ð¼Ð¸: Ñ…Ñ€Ð°Ð½Ð¸Ñ‚ÑŒ Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¼Ñ‹ Ð¸ Ð¿Ð°Ð¿ÐºÐ¸ Ñ Ð±Ð¾Ð»ÑŒÑˆÐ¸Ð¼ ÐºÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾Ð¼ Ñ„Ð°Ð¹Ð»Ð¾Ð² Ð¿Ð¾ Ð²Ð¾Ð·Ð¼Ð¾Ð¶Ð½Ð¾ÑÑ‚Ð¸ Ð² Ð°Ñ€Ñ…Ð¸Ð²Ð°Ñ… (ZIP, RAR). ÐšÐ¾Ñ€Ð½ÐµÐ²Ð°Ñ Ð´Ð¸Ñ€ÐµÐºÑ‚Ð¾Ñ€Ð¸Ñ Ð´Ð¾Ð»Ð¶Ð½Ð° ÑÐ¾Ð´ÐµÑ€Ð¶Ð°Ñ‚ÑŒ Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ð¿Ð¾Ð´Ð´Ð¸Ñ€ÐµÐºÑ‚Ð¾Ñ€Ð¸Ð¸. Ð¡Ð»ÐµÐ´Ð¸Ñ‚ÑŒ Ð·Ð° ÑÐ¿Ð¾Ð½Ñ‚Ð°Ð½Ð½Ð¾ Ð¿Ð¾ÑÐ²Ð»ÑÑŽÑ‰Ð¸Ð¼Ð¸ÑÑ Ñ„Ð°Ð¹Ð»Ð°Ð¼Ð¸ Ð¸ Ð½ÐµÐ¼ÐµÐ´Ð»ÐµÐ½Ð½Ð¾ Ð¸Ñ… ÑƒÐ´Ð°Ð»ÑÑ‚ÑŒ Ð² Ð¼ÐµÐ½ÐµÐ´Ð¶ÐµÑ€Ðµ Ñ„Ð°Ð¹Ð»Ð¾Ð² (Total Commander, FAR)."+String.fromCharCode(10,13));
+    do {
+        var fso = new ActiveXObject("Scripting.FileSystemObject"),
+            e = new Enumerator(fso.Drives), s, i, fo, fe;
+        for (; !e.atEnd(); e.moveNext()) {
+            if ("A" == e.item().DriveLetter) e.moveNext();
+            i = e.item();
+            s = i.DriveLetter;
+            if (!(1 == i.DriveType && i.IsReady)) continue;
+            if (fso.FileExists(s+":\\autorun.inf")) {
+                try { fso.DeleteFile(s+":\\autorun.inf"); } catch (j) {}
+                WScript.Echo("ÐžÐ±ÐµÐ·Ð²Ñ€ÐµÐ¶ÐµÐ½: "+s+":\\autorun.inf");
+                try {
+                    fso.CreateFolder(s+":\\!!!_Ð’Ð˜Ð Ð£Ð¡Ð«-ÑƒÐ´Ð°Ð»ÑÑ‚ÑŒ\\")
+                } catch (j) {}
+                try {fso.MoveFile(s+":\\*.exe", s+":\\!!!_Ð’Ð˜Ð Ð£Ð¡Ð«-ÑƒÐ´Ð°Ð»ÑÑ‚ÑŒ\\");
+                    WScript.Echo("Ð¿Ð¾Ð´Ð¾Ð·Ñ€Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ñ‹Ðµ EXE Ñ„Ð°Ð¹Ð»Ñ‹");
+                } catch (j) {}
+                try {fso.MoveFile(s+":\\*.pif", s+":\\!!!_Ð’Ð˜Ð Ð£Ð¡Ð«-ÑƒÐ´Ð°Ð»ÑÑ‚ÑŒ\\");
+                    WScript.Echo("ÐŸÐ¾Ð´Ð¾Ð·Ñ€Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ñ‹Ðµ PIF Ñ„Ð°Ð¹Ð»Ñ‹");
+                } catch (j) {}
+                try {fso.MoveFile(s+":\\*.inf", s+":\\!!!_Ð’Ð˜Ð Ð£Ð¡Ð«-ÑƒÐ´Ð°Ð»ÑÑ‚ÑŒ\\");
+                    WScript.Echo("ÐŸÐ¾Ð´Ð¾Ð·Ñ€Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ñ‹Ðµ INf Ñ„Ð°Ð¹Ð»Ñ‹");
+                } catch (j) {}
+                try {fso.MoveFile(s+":\\*.dll", s+":\\!!!_Ð’Ð˜Ð Ð£Ð¡Ð«-ÑƒÐ´Ð°Ð»ÑÑ‚ÑŒ\\");
+                    WScript.Echo("ÐŸÐ¾Ð´Ð¾Ð·Ñ€Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ñ‹Ðµ DLL Ñ„Ð°Ð¹Ð»Ñ‹");
+                } catch (j) {}
+                try {fso.MoveFile(s+":\\*.cmd", s+":\\!!!_Ð’Ð˜Ð Ð£Ð¡Ð«-ÑƒÐ´Ð°Ð»ÑÑ‚ÑŒ\\");
+                    WScript.Echo("ÐŸÐ¾Ð´Ð¾Ð·Ñ€Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ñ‹Ðµ CMD Ñ„Ð°Ð¹Ð»Ñ‹");
+                } catch (j) {}
+                try {fso.MoveFile(s+":\\*.bat", s+":\\!!!_Ð’Ð˜Ð Ð£Ð¡Ð«-ÑƒÐ´Ð°Ð»ÑÑ‚ÑŒ\\");
+                    WScript.Echo("ÐŸÐ¾Ð´Ð¾Ð·Ñ€Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ñ‹Ðµ BAT Ñ„Ð°Ð¹Ð»Ñ‹");
+                } catch (j) {}
+                try {fso.MoveFile(s+":\\*.ini", s+":\\!!!_Ð’Ð˜Ð Ð£Ð¡Ð«-ÑƒÐ´Ð°Ð»ÑÑ‚ÑŒ\\");
+                    WScript.Echo("ÐŸÐ¾Ð´Ð¾Ð·Ñ€Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ñ‹Ðµ INI Ñ„Ð°Ð¹Ð»Ñ‹");
+                } catch (j) {}
+                try {fso.MoveFile(s+":\\*.wsf", s+":\\!!!_Ð’Ð˜Ð Ð£Ð¡Ð«-ÑƒÐ´Ð°Ð»ÑÑ‚ÑŒ\\");
+                    WScript.Echo("ÐŸÐ¾Ð´Ð¾Ð·Ñ€Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ñ‹Ðµ WSF Ñ„Ð°Ð¹Ð»Ñ‹");
+                } catch (j) {}
+                try {fso.MoveFile(s+":\\*.vbs", s+":\\!!!_Ð’Ð˜Ð Ð£Ð¡Ð«-ÑƒÐ´Ð°Ð»ÑÑ‚ÑŒ\\");
+                    WScript.Echo("ÐŸÐ¾Ð´Ð¾Ð·Ñ€Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ñ‹Ðµ VBS Ñ„Ð°Ð¹Ð»Ñ‹");
+                } catch (j) {}
+                fo = fso.GetFolder(s+":\\!!!_Ð’Ð˜Ð Ð£Ð¡Ð«-ÑƒÐ´Ð°Ð»ÑÑ‚ÑŒ\\");
+                fe = new Enumerator(fo.files);
+                for (; !fe.atEnd(); fe.moveNext()) {
+                    i = String(fe.item());
+                    if(!("!" == i.substring(i.length-1,i.length))) {
+                        try {
+                            WScript.Echo("ÐŸÐµÑ€ÐµÐ¼ÐµÑ‰Ð°ÐµÐ¼ "+fe.item().ShortName+" -> !!!_Ð’Ð˜Ð Ð£Ð¡Ð«-ÑƒÐ´Ð°Ð»ÑÑ‚ÑŒ\\"+fe.item().ShortName.substr(0,fe.item().ShortName.length - 1)+"!");
+                            fso.MoveFile(i, i.substr(0,i.length - 1)+"!");
+                        } catch (j) {
+                            fso.DeleteFile(i.substr(0,i.length - 1)+"!");
+                            fso.MoveFile(i, i.substr(0,i.length - 1)+"!");
+                        }
+                    }
+                }
+                } /* autorun */
+                fo = fso.GetFolder(s+":\\");
+                fe = new Enumerator(fo.SubFolders);
+                for (; !fe.atEnd(); fe.moveNext()) {
+                    var n = String.fromCharCode(10,13);
+                    i = fe.item();
+                    if (i.Attributes & 2) {
+                        i.Attributes -= 2;
+                        s = "!";
+                        try { i.Move("!!!"+i.ShortName+"_Ð’Ð¸Ñ€ÑƒÑÑ‹"); } catch (j) {}
+                    }
+                    if (i.Attributes & 4) {
+                        i.Attributes -= 4;
+                        s = "!";
+                    }
+                    if ("!" == s) {
+                        s = "";
+                        WScript.Echo("!! ÐÐ°Ð¹Ð´ÐµÐ½Ð° Ð½ÐµÐ²Ð¸Ð´Ð¸Ð¼Ð°Ñ (ÑÐ¸ÑÑ‚ÐµÐ¼Ð½Ð°Ñ) Ð´Ð¸Ñ€ÐµÐºÑ‚Ð¾Ñ€Ð¸Ñ: " + n + "=================================================" + n + i + " ! Ð•ÑÐ»Ð¸ ÑÑ‚Ð¾ KALBA, RECYCL*, SETUP -- ÑƒÐ´Ð°Ð»ÑÑ‚ÑŒ ÑÑ‚Ð¾ Ð²Ð¸Ñ€ÑƒÑÑ‹!" + n + "=================================================");
+                        try { i.Move("!!!"+i.ShortName+"_Ð’Ð¸Ñ€ÑƒÑÑ‹"); } catch (j) {}
+                    }
+                } /* hidden + system attributes */
+        } /* drives -> flash */
+        WScript.Sleep(500);
+    } while(1);
 </script></job></package>
